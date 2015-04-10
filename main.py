@@ -93,7 +93,7 @@ Passed:      $passed
         try:
             # out = ""
             if args.lang == "python":
-                out = subprocess.check_output(['python3', c[0]])
+                out = subprocess.check_output(['python3', c])
             elif args.lang == "powershell":
                 out = subprocess.check_output(['powershell.exe', c[0]])
         except subprocess.CalledProcessError as e:
