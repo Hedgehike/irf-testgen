@@ -5,6 +5,7 @@ import subprocess
 import string
 import argparse
 import os
+import re
 
 
 def generate_powershell_case(p, script):
@@ -29,11 +30,16 @@ def generate_python_case(p, script):
     case = []
     expected = ""
     invalid_count = 0
+    error_count=0
     for elem in p:
         if 'I' in elem.split(',')[1]:
             invalid_count += 1
+        elif 'E' in elem.split(',')[1]:
+            error_count += int(elem.split(',')[1][1:])
     if invalid_count == 1:
         expected = "Exception"
+    elif error_count > 0:
+        expected = "Error " + error_count.__str__()
     if invalid_count <= 1:
         for elem in p:
             if "none" not in elem.split(',')[0]:
@@ -105,12 +111,22 @@ Passed:      $passed
             # text = template.replace('%index', index.__str__()).replace('%input', c[0]).replace('%expected', c[1])\
             # .replace("%output", out.__str__())\
             #     .replace("%passed", (c[1] == "Exception" and exception or c[1] != "Exception" and not exception).__str__())
+
+            # IF we look for a specified number of errors
+            m = re.search(r"Error (\d+)", c[1])
+
+            if c[1] == "Exception":
+                passed = exception
+            elif m is not None:
+                passed = (len(re.findall("ERROR", out.decode("utf-8"))) == int(m.group(1)))
+            else:
+                passed = not exception
             mapping = {
                 "index": index.__str__(),
                 "input": " ".join(c[0]),
                 "expected": c[1],
-                "output": out.__str__(),
-                "passed": (c[1] == "Exception" and exception or c[1] != "Exception" and not exception).__str__()
+                "output": "\n"+out.decode("utf-8"),
+                "passed": passed.__str__()
             }
             text = template.substitute(mapping)
             index += 1
