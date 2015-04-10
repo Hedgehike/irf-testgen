@@ -9,21 +9,38 @@ import argparse
 def generate_powershell_case(p, script):
     case = ""
     expected = ""
-    skip = False
-    invalidCount = 0
+    invalid_count = 0
     for elem in p:
         if 'I' in elem.split(',')[1]:
-            invalidCount += 1
-    if invalidCount == 1:
+            invalid_count += 1
+    if invalid_count == 1:
         expected = "Exception"
-    if invalidCount <= 1:
+    if invalid_count <= 1:
         for elem in p:
             if "none" not in elem.split(',')[0]:
                 case += elem.split(',')[0] + ' '
-        return [script + case, expected, invalidCount]
+        return [script + case, expected, invalid_count]
     else:
         return None
 
+
+def generate_python_case(p, script):
+    case = []
+    expected = ""
+    invalid_count = 0
+    for elem in p:
+        if 'I' in elem.split(',')[1]:
+            invalid_count += 1
+    if invalid_count == 1:
+        expected = "Exception"
+    if invalid_count <= 1:
+        for elem in p:
+            if "none" not in elem.split(',')[0]:
+                case.append(elem.split(',')[0])
+        case = [script] + case
+        return [case, expected, invalid_count]
+    else:
+        return None
 
 
 def main():
@@ -63,7 +80,10 @@ Passed:      $passed
         master.append(current_list)
     cases = []
     for p in itertools.product(*master):
-        case = generate_powershell_case(p, args.script)
+        if args.lang == "powershell":
+            case = generate_powershell_case(p, args.script)
+        elif args.lang == "python":
+            case = generate_python_case(p, args.script)
         if case is not None:
             cases.append(case)
     index = 0
