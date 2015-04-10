@@ -11,6 +11,7 @@ value2,[V|I|E]
 values...
 ```
 
-V means valid, I means invalid and E means contains non-terminating errors. Support for E is experimental currently.
+V means valid, I means invalid and E means contains non-terminating errors. (Support for E is experimental currently.)
 The script generates test cases, which are all possible variations of input parameters, where a variation contains a maximum of 1 invalid cases.
+Invalid cases are checked by getting the return code of the tested script. In PowerShell, a thrown exception will return a nonzero code, while in python you are encouraged to set it yourself by calling sys.exit(1) at the end of your script.
 The output gets printed to the standart output.
