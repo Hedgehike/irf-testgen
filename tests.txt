@@ -1,0 +1,20 @@
+#OutFile
+output.csv,V
+.\output.csv,V
+asdasdasd,V
+C:\sad\output.csv,I
+C:\output.csv,V
+C:\invalid??\output.csv,I
+???,I
+C:\Users\Administrator\output.csv,V
+#Number
+267,V
+asd,I
+2678,I
+26,I
+2a6,I
+#Unit
+none,V
+Department of Design,V
+asdsasdewg,I
+???,I
