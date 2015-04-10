@@ -28,9 +28,12 @@ def generate_python_case(p, script):
     case = []
     expected = ""
     invalid_count = 0
+    error_count = 0
     for elem in p:
         if 'I' in elem.split(',')[1]:
             invalid_count += 1
+        elif 'E' in elem.split(',')[1]:
+            error_count += elem.split(",")[1][1:]
     if invalid_count == 1:
         expected = "Exception"
     if invalid_count <= 1:
@@ -93,7 +96,7 @@ Passed:      $passed
         try:
             # out = ""
             if args.lang == "python":
-                out = subprocess.check_output(['python3', c])
+                out = subprocess.check_output('python3' + c[0])
             elif args.lang == "powershell":
                 out = subprocess.check_output(['powershell.exe', c[0]])
         except subprocess.CalledProcessError as e:
@@ -105,10 +108,10 @@ Passed:      $passed
             #     .replace("%passed", (c[1] == "Exception" and exception or c[1] != "Exception" and not exception).__str__())
             mapping = {
                 "index": index.__str__(),
-                "indput": c[0],
+                "input": c[0],
                 "expected": c[1],
                 "output": out.__str__(),
-                "passed ": (c[1] == "Exception" and exception or c[1] != "Exception" and not exception).__str__()
+                "passed": (c[1] == "Exception" and exception or c[1] != "Exception" and not exception).__str__()
             }
             text = template.substitute(mapping)
             index += 1
